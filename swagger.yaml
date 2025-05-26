@@ -1,0 +1,690 @@
+openapi: 3.0.0
+info:
+  title: ERD-Mobile Backend API
+  version: 1.0.0
+  description: Dokumentasi CRUD untuk semua entitas berdasarkan ERD-Mobile
+servers:
+  - url: http://localhost:3000/api
+    description: Local server
+
+tags:
+  - name: Users
+  - name: Books
+  - name: Reviews
+  - name: Bookmarks
+  - name: UserBooks
+  - name: Publishers
+  - name: PublisherRegistrations
+  - name: ContentProviders
+  - name: DiscussionForums
+  - name: ForumPosts
+  - name: Admins
+
+paths:
+  /users:
+    get:
+      tags: [Users]
+      summary: Get all users
+      responses:
+        '200':
+          description: OK
+    post:
+      tags: [Users]
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '201':
+          description: Created
+
+  /users/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdParam'
+    get:
+      tags: [Users]
+      summary: Get user by ID
+      responses:
+        '200': { description: OK }
+        '404': { description: Not found }
+    put:
+      tags: [Users]
+      summary: Update user by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [Users]
+      summary: Delete user by ID
+      responses:
+        '200': { description: Deleted }
+
+  /books:
+    get:
+      tags: [Books]
+      summary: Get all books
+      responses:
+        '200': { description: OK }
+    post:
+      tags: [Books]
+      summary: Create a new book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookInput'
+      responses:
+        '201': { description: Created }
+
+  /books/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      tags: [Books]
+      summary: Get book by ID
+      responses:
+        '200': { description: OK }
+        '404': { description: Not found }
+    put:
+      tags: [Books]
+      summary: Update book by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookInput'
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [Books]
+      summary: Delete book by ID
+      responses:
+        '200': { description: Deleted }
+
+  /reviews:
+    get:
+      tags: [Reviews]
+      summary: Get all reviews (optional filter ?bookId=)
+      parameters:
+        - name: bookId
+          in: query
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+    post:
+      tags: [Reviews]
+      summary: Create a new review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewInput'
+      responses:
+        '201': { description: Created }
+
+  /reviews/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      tags: [Reviews]
+      summary: Get review by ID
+      responses:
+        '200': { description: OK }
+        '404': { description: Not found }
+    put:
+      tags: [Reviews]
+      summary: Update review by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewUpdate'
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [Reviews]
+      summary: Delete review by ID
+      responses:
+        '200': { description: Deleted }
+
+  /bookmarks:
+    get:
+      tags: [Bookmarks]
+      summary: Get all bookmarks (optional filter ?userId=)
+      parameters:
+        - name: userId
+          in: query
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+    post:
+      tags: [Bookmarks]
+      summary: Create a new bookmark
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookmarkInput'
+      responses:
+        '201': { description: Created }
+
+  /bookmarks/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      tags: [Bookmarks]
+      summary: Get bookmark by ID
+      responses:
+        '200': { description: OK }
+        '404': { description: Not found }
+    put:
+      tags: [Bookmarks]
+      summary: Update bookmark by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookmarkUpdate'
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [Bookmarks]
+      summary: Delete bookmark by ID
+      responses:
+        '200': { description: Deleted }
+
+  /user-books:
+    get:
+      tags: [UserBooks]
+      summary: Get all user-book entries
+      responses:
+        '200': { description: OK }
+    post:
+      tags: [UserBooks]
+      summary: Create a new user-book entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserBookInput'
+      responses:
+        '201': { description: Created }
+
+  /user-books/user/{userId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      tags: [UserBooks]
+      summary: Get all books for a specific user
+      responses:
+        '200': { description: OK }
+
+  /user-books/{userId}/{bookId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema: { type: integer }
+      - name: bookId
+        in: path
+        required: true
+        schema: { type: integer }
+    put:
+      tags: [UserBooks]
+      summary: Update a user-book entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserBookUpdate'
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [UserBooks]
+      summary: Delete a user-book entry
+      responses:
+        '200': { description: Deleted }
+
+  /publishers:
+    get:
+      tags: [Publishers]
+      summary: Get all publishers
+      responses:
+        '200': { description: OK }
+    post:
+      tags: [Publishers]
+      summary: Create a new publisher
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublisherInput'
+      responses:
+        '201': { description: Created }
+
+  /publishers/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      tags: [Publishers]
+      summary: Get publisher by ID
+      responses:
+        '200': { description: OK }
+        '404': { description: Not found }
+    put:
+      tags: [Publishers]
+      summary: Update publisher by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublisherInput'
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [Publishers]
+      summary: Delete publisher by ID
+      responses:
+        '200': { description: Deleted }
+
+  /publisher-registrations:
+    get:
+      tags: [PublisherRegistrations]
+      summary: Get all registrations
+      responses:
+        '200': { description: OK }
+    post:
+      tags: [PublisherRegistrations]
+      summary: Create a new registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublisherRegistrationInput'
+      responses:
+        '201': { description: Created }
+
+  /publisher-registrations/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      tags: [PublisherRegistrations]
+      summary: Get registration by ID
+      responses:
+        '200': { description: OK }
+        '404': { description: Not found }
+    put:
+      tags: [PublisherRegistrations]
+      summary: Update registration by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublisherRegistrationUpdate'
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [PublisherRegistrations]
+      summary: Delete registration by ID
+      responses:
+        '200': { description: Deleted }
+
+  /content-providers:
+    get:
+      tags: [ContentProviders]
+      summary: Get all content providers
+      responses:
+        '200': { description: OK }
+    post:
+      tags: [ContentProviders]
+      summary: Create a new content provider
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContentProviderInput'
+      responses:
+        '201': { description: Created }
+
+  /content-providers/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      tags: [ContentProviders]
+      summary: Get content provider by ID
+      responses:
+        '200': { description: OK }
+        '404': { description: Not found }
+    put:
+      tags: [ContentProviders]
+      summary: Update content provider by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContentProviderInput'
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [ContentProviders]
+      summary: Delete content provider by ID
+      responses:
+        '200': { description: Deleted }
+
+  /discussion-forums:
+    get:
+      tags: [DiscussionForums]
+      summary: Get all discussion forums
+      responses:
+        '200': { description: OK }
+    post:
+      tags: [DiscussionForums]
+      summary: Create a new discussion forum
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiscussionForumInput'
+      responses:
+        '201': { description: Created }
+
+  /discussion-forums/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      tags: [DiscussionForums]
+      summary: Get discussion forum by ID
+      responses:
+        '200': { description: OK }
+        '404': { description: Not found }
+    put:
+      tags: [DiscussionForums]
+      summary: Update discussion forum by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiscussionForumInput'
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [DiscussionForums]
+      summary: Delete discussion forum by ID
+      responses:
+        '200': { description: Deleted }
+
+  /forum-posts:
+    get:
+      tags: [ForumPosts]
+      summary: Get all forum posts (optional filter ?forumId=)
+      parameters:
+        - name: forumId
+          in: query
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+    post:
+      tags: [ForumPosts]
+      summary: Create a new forum post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForumPostInput'
+      responses:
+        '201': { description: Created }
+
+  /forum-posts/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      tags: [ForumPosts]
+      summary: Get forum post by ID
+      responses:
+        '200': { description: OK }
+        '404': { description: Not found }
+    put:
+      tags: [ForumPosts]
+      summary: Update forum post by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForumPostUpdate'
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [ForumPosts]
+      summary: Delete forum post by ID
+      responses:
+        '200': { description: Deleted }
+
+  /admins:
+    get:
+      tags: [Admins]
+      summary: Get all admins
+      responses:
+        '200': { description: OK }
+    post:
+      tags: [Admins]
+      summary: Create a new admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminInput'
+      responses:
+        '201': { description: Created }
+
+  /admins/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      tags: [Admins]
+      summary: Get admin by ID
+      responses:
+        '200': { description: OK }
+        '404': { description: Not found }
+    put:
+      tags: [Admins]
+      summary: Update admin by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminInput'
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [Admins]
+      summary: Delete admin by ID
+      responses:
+        '200': { description: Deleted }
+
+components:
+  parameters:
+    IdParam:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer }
+  schemas:
+    UserInput:
+      type: object
+      required: [nama,email,password,tanggal_daftar,status_langganan]
+      properties:
+        nama: { type: string }
+        email: { type: string }
+        password: { type: string }
+        tanggal_daftar: { type: string, format: date }
+        status_langganan: { type: string }
+    BookInput:
+      type: object
+      required: [judul,penulis,deskripsi,kategori,harga,format,cover_image_url,publisher_id,content_provider_id]
+      properties:
+        judul: { type: string }
+        penulis: { type: string }
+        deskripsi: { type: string }
+        kategori: { type: string }
+        harga: { type: number }
+        format: { type: string }
+        cover_image_url: { type: string }
+        publisher_id: { type: integer }
+        content_provider_id: { type: integer }
+    ReviewInput:
+      type: object
+      required: [user_id,book_id,rating,komentar,tanggal_review]
+      properties:
+        user_id: { type: integer }
+        book_id: { type: integer }
+        rating: { type: integer }
+        komentar: { type: string }
+        tanggal_review: { type: string, format: date }
+    ReviewUpdate:
+      type: object
+      properties:
+        rating: { type: integer }
+        komentar: { type: string }
+    BookmarkInput:
+      type: object
+      required: [user_id,book_id,halaman,tanggal]
+      properties:
+        user_id: { type: integer }
+        book_id: { type: integer }
+        halaman: { type: integer }
+        tanggal: { type: string, format: date }
+    BookmarkUpdate:
+      type: object
+      properties:
+        halaman: { type: integer }
+        tanggal: { type: string, format: date }
+    UserBookInput:
+      type: object
+      required: [user_id,book_id,status_baca,tanggal_baca,page_terakhir]
+      properties:
+        user_id: { type: integer }
+        book_id: { type: integer }
+        status_baca: { type: string }
+        tanggal_baca: { type: string, format: date }
+        page_terakhir: { type: integer }
+    UserBookUpdate:
+      type: object
+      properties:
+        status_baca: { type: string }
+        tanggal_baca: { type: string, format: date }
+        page_terakhir: { type: integer }
+    PublisherInput:
+      type: object
+      required: [nama_penerbit,alamat,kontak]
+      properties:
+        nama_penerbit: { type: string }
+        alamat: { type: string }
+        kontak: { type: string }
+    PublisherRegistrationInput:
+      type: object
+      required: [user_id,status,tanggal_daftar,nama_perusahaan,alamat_perusahaan,kontak_perusahaan]
+      properties:
+        user_id: { type: integer }
+        status: { type: string }
+        tanggal_daftar: { type: string, format: date }
+        nama_perusahaan: { type: string }
+        alamat_perusahaan: { type: string }
+        kontak_perusahaan: { type: string }
+    PublisherRegistrationUpdate:
+      type: object
+      properties:
+        status: { type: string }
+        nama_perusahaan: { type: string }
+        alamat_perusahaan: { type: string }
+        kontak_perusahaan: { type: string }
+    ContentProviderInput:
+      type: object
+      required: [nama_platform,url]
+      properties:
+        nama_platform: { type: string }
+        url: { type: string }
+    DiscussionForumInput:
+      type: object
+      required: [book_id,judul,konten,tanggal_post]
+      properties:
+        book_id: { type: integer }
+        judul: { type: string }
+        konten: { type: string }
+        tanggal_post: { type: string, format: date }
+    ForumPostInput:
+      type: object
+      required: [forum_id,user_id,konten,tanggal_post]
+      properties:
+        forum_id: { type: integer }
+        user_id: { type: integer }
+        konten: { type: string }
+        tanggal_post: { type: string, format: date }
+    ForumPostUpdate:
+      type: object
+      properties:
+        konten: { type: string }
+        tanggal_post: { type: string, format: date }
+    AdminInput:
+      type: object
+      required: [user_id,role]
+      properties:
+        user_id: { type: integer }
+        role: { type: string }
